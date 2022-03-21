@@ -5,7 +5,11 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
+import { getAllMovies, getMovieById, deleteMovieById, updateMovieById, createMovies } from "./helper.js";
+import {moviesRouter} from "./routes/movies.js";
+import { usersRouter } from "./routes/users.js";
 dotenv.config();
+
 
 console.log(process.env.MONGO_URL);
 const app = express();
@@ -17,7 +21,7 @@ const movies = [
     id: "100",
     name: "Iron man 2",
     poster:
-      "https://m.media-amazon.com/images/M/MV5BMTM0MDgwNjMyMl5BMl5BanBnXkFtZTcwNTg3NzAzMw@@._V1_FMjpg_UX1000_.jpg",
+      "https://m.media-amazon.com/posters/M/MV5BMTM0MDgwNjMyMl5BMl5BanBnXkFtZTcwNTg3NzAzMw@@._V1_FMjpg_UX1000_.jpg",
     rating: 7,
     summary:
       "With the world now aware that he is Iron Man, billionaire inventor Tony Stark (Robert Downey Jr.) faces pressure from all sides to share his technology with the military. He is reluctant to divulge the secrets of his armored suit, fearing the information will fall into the wrong hands. With Pepper Potts (Gwyneth Paltrow) and Rhodes (Don Cheadle) by his side, Tony must forge new alliances and confront a powerful new enemy.",
@@ -37,7 +41,7 @@ const movies = [
     id: "102",
     name: "Jai Bhim",
     poster:
-      "https://m.media-amazon.com/images/M/MV5BY2Y5ZWMwZDgtZDQxYy00Mjk0LThhY2YtMmU1MTRmMjVhMjRiXkEyXkFqcGdeQXVyMTI1NDEyNTM5._V1_FMjpg_UX1000_.jpg",
+      "https://m.media-amazon.com/posters/M/MV5BY2Y5ZWMwZDgtZDQxYy00Mjk0LThhY2YtMmU1MTRmMjVhMjRiXkEyXkFqcGdeQXVyMTI1NDEyNTM5._V1_FMjpg_UX1000_.jpg",
     summary:
       "A tribal woman and a righteous lawyer battle in court to unravel the mystery around the disappearance of her husband, who was picked up the police on a false case",
     rating: 8.8,
@@ -56,7 +60,7 @@ const movies = [
   {
     id: "104",
     name: "Interstellar",
-    poster: "https://m.media-amazon.com/images/I/A1JVqNMI7UL._SL1500_.jpg",
+    poster: "https://m.media-amazon.com/posters/I/A1JVqNMI7UL._SL1500_.jpg",
     rating: 8.6,
     summary:
       "When Earth becomes uninhabitable in the future, a farmer and ex-NASA\n pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team\n of researchers, to find a new planet for humans.",
@@ -96,7 +100,7 @@ async function createConnection() {
     console.log("Mongo is connected 😊");
     return client;
 }
-const client = await createConnection();
+export const client = await createConnection();
 
 app.get("/", function (request, response) {
   response.send("Hello World 🌍😃😊");
@@ -106,69 +110,12 @@ app.get("/", function (request, response) {
 //   response.send(movies);
 // });
 
-//use of toArray() -> cursor - pagination -> convert to an array (toArray)
-app.get("/movies", async function (request, response) {
-    // db.movies.find({})
-    const movies = await client
-            .db("b30wd")
-            .collection("movies")
-            .find({})
-            .toArray(); 
-    response.send(movies);
-  });
+app.use('/movies', moviesRouter)
 
-app.get("/movies/:id", async function (request, response) {
-  console.log(request.params);
-  // db.movies.findOne({id: "102"})
-  const { id } = request.params;
-//   const movie = movies.find((mv) => mv.id === id); //this line will return a movie details respected to the id specified.
-const movie = await client
-            .db("b30wd")
-            .collection("movies")
-            .findOne({id : id});
-
-  console.log(movie);
-  movie ? response.send(movie) : response.status(404).send({message: "No such movie found"});
-  response.send(movie);
-  // response.send(movies);
-});
-
-app.delete("/movies/:id", async function (request, response) {
-    console.log(request.params);
-    // db.movies.deleteOne({id: "102"})
-    const { id } = request.params;
-  //   const movie = movies.find((mv) => mv.id === id); //this line will return a movie details respected to the id specified.
-  const result = await client
-              .db("b30wd")
-              .collection("movies")
-              .deleteOne({id : id});
-    response.send(result);
-    // response.send(movies);
-  });
-
-  app.put("/movies/:id", async function (request, response) {
-    console.log(request.params);
-    // db.movies.updateOne({id: "102"}, {$set : updateData})
-    const { id } = request.params;
-    const updateData = request.body;
- 
-  const result = await client
-              .db("b30wd")
-              .collection("movies")
-              .updateOne({id : id},{$set : updateData});
-    response.send(result);
-    // response.send(movies);
-  });
-
-app.post("/movies", async function (request, response) {
-    // db.movies.insertMany(data)
-    const data = request.body;
-    console.log(data);
-    const result = await client
-            .db("b30wd")
-            .collection("movies")
-            .insertMany(data);
-    response.send(result);
-  });
+app.use('/users', usersRouter)
 
 app.listen(PORT, () => console.log(`Server started in ${PORT}`));
+
+
+
+
