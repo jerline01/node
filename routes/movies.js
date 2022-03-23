@@ -2,6 +2,12 @@ import express from "express";
 
 import { getAllMovies, getMovieById, deleteMovieById, updateMovieById, createMovies } from "../helper.js";
 const router = express.Router();
+import {auth} from "../middleware/auth.js"
+
+router.get('/', async function (request,response){
+  const movies = await getAllMovies();
+  response.send(movies);
+})
 
 //use of toArray() -> cursor - pagination -> convert to an array (toArray)
 router.get("/movies", async function (request, response) {
