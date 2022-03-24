@@ -115,6 +115,29 @@ const movies = [
 //   },
 // ];
 
+// const fruits = [
+//   {
+//     name: "Apple",
+//     img: "https://5.imimg.com/data5/YY/EN/MY-8155364/fresh-apple-500x500.jpg"
+//   },
+//   {
+//     name: "Orange",
+//     img: "https://media.istockphoto.com/photos/orange-picture-id185284489?k=20&m=185284489&s=612x612&w=0&h=LLY2os0YTG2uAzpBKpQZOAC4DGiXBt1jJrltErTJTKI="
+//   },
+//   {
+//     name: "Pine Apple",
+//     img: "https://media.istockphoto.com/photos/whole-with-slice-ripe-pineapple-isolated-on-white-background-picture-id1064819674?k=20&m=1064819674&s=612x612&w=0&h=WIYJDrmo9L6xh8-l0dCkmCCb9_rIBQhhp4m2MXK_XMc="
+//   },
+//   {
+//     name: "Strawberry",
+//     img: "https://media.istockphoto.com/photos/red-berry-strawberry-isolated-picture-id1157946861?k=20&m=1157946861&s=612x612&w=0&h=TkcgPU1fblZISunSxNasdYUqUHz_Mrmo0eGWaxLQHEI="
+//   },
+//   {
+//     name: "Grapes",
+//     img: "https://www.jiomart.com/images/product/600x600/590000042/sonaka-seedless-grapes-1-kg-product-images-o590000042-p590116962-0-202203142035.jpg"
+//   }
+// ];
+
 app.use(cors()); // cors - 3rd party middleware
 // middle ware -> Intercept -> converting body to json
 app.use(express.json()); //inbuilt middleware
@@ -160,5 +183,23 @@ app.post("/mobiles", async function (request, response) {
     .insertMany(data);
   response.send(result);
 });
+
+app.get("/fruits", async function(request,response){
+  const result = await client 
+    .db("b30wd")
+    .collection("fruits")
+    .find({})
+    .toArray();
+  response.send(result);
+});
+
+app.post("/fruits", async function(request,response){
+  const data = request.body;
+  const result = await client 
+   .db("b30wd")
+   .collection("fruits")
+   .insertMany(data);
+  response.send(result);
+})
 
 app.listen(PORT, () => console.log(`Server started in ${PORT}`));
