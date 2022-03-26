@@ -138,6 +138,24 @@ const movies = [
 //   }
 // ];
 
+// const MovieList = [
+//   {
+//     name : "Avengers",
+//     img : "https://lumiere-a.akamaihd.net/v1/images/p_avengersendgame_19751_e14a0104.jpeg?region=0%2C0%2C540%2C810"
+//   },
+//   {
+//     name : "Bigil",
+//     img : "https://static.toiimg.com/photo/71832899.cms"
+//   },
+//   {
+//     name : "FIR",
+//     img : "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ecef6882970867.5d2dfc06d0bc0.jpg"
+//   }, {
+//     name : "Sarkar",
+//     img : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToiNRYnmEcd5P8OhriM2pS-Z85x_8qGdyaJQ&usqp=CAU"
+//   }
+// ]
+
 app.use(cors()); // cors - 3rd party middleware
 // middle ware -> Intercept -> converting body to json
 app.use(express.json()); //inbuilt middleware
@@ -161,9 +179,9 @@ app.get("/", function (request, response) {
 //   response.send(movies);
 // });
 
-app.use("/movies", moviesRouter);
+// app.use("/movies", moviesRouter);
 
-app.use("/users", usersRouter);
+// app.use("/users", usersRouter);
 
 app.get("/mobiles", async function (request, response) {
   // db.mobiles.find({})
@@ -198,6 +216,24 @@ app.post("/fruits", async function(request,response){
   const result = await client 
    .db("b30wd")
    .collection("fruits")
+   .insertMany(data);
+  response.send(result);
+})
+
+app.get("/movielist", async function(request,response){
+  const result = await client 
+    .db("b30wd")
+    .collection("movielist")
+    .find({})
+    .toArray();
+  response.send(result);
+});
+
+app.post("/movielist", async function(request,response){
+  const data = request.body;
+  const result = await client 
+   .db("b30wd")
+   .collection("movielist")
    .insertMany(data);
   response.send(result);
 })
